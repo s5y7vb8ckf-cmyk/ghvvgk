@@ -193,6 +193,9 @@ button:focus-visible, textarea:focus-visible {
   border-top: 1px solid var(--border);
   padding-top: 14px;
   margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .side-action {
@@ -214,6 +217,35 @@ button:focus-visible, textarea:focus-visible {
 .side-action:hover {
   background: #f1f5f3;
   color: #ca3a3a;
+}
+
+.sidebar-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f0f6f3;
+  border: 1px solid #e1ebe5;
+  border-radius: var(--radius-md);
+  color: #526159;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #b8a36c;
+}
+
+.sidebar-status.online .status-dot {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.sidebar-status.offline .status-dot {
+  background: #ef4444;
 }
 
 .main {
@@ -252,36 +284,6 @@ button:focus-visible, textarea:focus-visible {
   color: var(--muted);
   margin-top: 2px;
   font-weight: 500;
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  background: #f0f6f3;
-  border: 1px solid #e1ebe5;
-  border-radius: 30px;
-  color: #526159;
-  font-size: 12px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #b8a36c;
-}
-
-.status.online .status-dot {
-  background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
-}
-
-.status.offline .status-dot {
-  background: #ef4444;
 }
 
 .chat-scroll {
@@ -439,6 +441,15 @@ button:focus-visible, textarea:focus-visible {
   white-space: pre-wrap;
 }
 
+.bubble-image {
+  max-width: 280px;
+  max-height: 280px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  display: block;
+  object-fit: cover;
+}
+
 .message.user .bubble {
   display: inline-block;
   max-width: 100%;
@@ -515,24 +526,33 @@ button:focus-visible, textarea:focus-visible {
 .typing {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 0;
+  gap: 6px;
+  padding: 6px 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-weight: 500;
 }
 
-.typing span {
-  width: 7px;
-  height: 7px;
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
   background: var(--green);
   border-radius: 50%;
   animation: bounce 1.2s infinite ease-in-out;
 }
 
-.typing span:nth-child(2) { animation-delay: 0.2s; }
-.typing span:nth-child(3) { animation-delay: 0.4s; }
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 
 @keyframes bounce {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-6px); opacity: 1; }
+  30% { transform: translateY(-5px); opacity: 1; }
 }
 
 .composer-wrap {
@@ -554,6 +574,43 @@ button:focus-visible, textarea:focus-visible {
 .composer:focus-within {
   border-color: var(--green);
   box-shadow: 0 0 0 4px rgba(8, 127, 91, 0.1);
+}
+
+/* المعاينة المسبقة للصور المرفقة */
+.image-preview-container {
+  display: none;
+  position: relative;
+  margin-bottom: 8px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.image-preview-container.show {
+  display: block;
+}
+
+.image-preview {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  background: #ef4444;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .composer textarea {
@@ -581,6 +638,25 @@ button:focus-visible, textarea:focus-visible {
   align-items: center;
   gap: 10px;
   padding-top: 4px;
+}
+
+.composer-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.attach-btn {
+  color: #7b8982;
+  font-size: 18px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.attach-btn:hover {
+  background: var(--light);
+  color: var(--green);
 }
 
 .composer-note {
@@ -702,7 +778,6 @@ button:focus-visible, textarea:focus-visible {
 
   .top-title { font-size: 15px; }
   .top-subtitle { font-size: 11px; }
-  .status { padding: 5px 9px; font-size: 11px; }
 
   .chat-inner { padding: 20px 14px; }
   .welcome { padding: 10px 0 20px; }
@@ -748,6 +823,10 @@ button:focus-visible, textarea:focus-visible {
     </div>
 
     <div class="sidebar-bottom">
+      <div class="sidebar-status" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">جارٍ الاتصال...</span>
+      </div>
       <button class="side-action" id="clearBtn">
         <i class="fa-regular fa-trash-can"></i><span>مسح المحادثات</span>
       </button>
@@ -767,10 +846,6 @@ button:focus-visible, textarea:focus-visible {
           <div class="top-subtitle">مساعدك للكتابة والبرمجة والأفكار</div>
         </div>
       </div>
-      <div class="status" id="connectionStatus">
-        <span class="status-dot"></span>
-        <span id="statusText">جارٍ الاتصال...</span>
-      </div>
     </header>
 
     <section class="chat-scroll" id="chatScroll">
@@ -778,7 +853,7 @@ button:focus-visible, textarea:focus-visible {
         <div class="welcome" id="welcome">
           <div class="welcome-logo"><i class="fa-solid fa-sparkles"></i></div>
           <h1>مرحبًا بك في <span>ميلو</span></h1>
-          <p>وش ودك نسوي اليوم؟ اسألني عن البرمجة، أو خلّني أساعدك في أفكارك ومشاريعك.</p>
+          <p>وش ودك نسوي اليوم؟ اسألني عن البرمجة، أو أرفق صورة لأحللها لك.</p>
           <div class="suggestions">
             <button class="suggestion" data-prompt="اقترح لي فكرة مشروع تقني مميز أقدر أبدأ فيه">
               <strong><i class="fa-regular fa-lightbulb"></i> أفكار المشاريع</strong>
@@ -804,9 +879,23 @@ button:focus-visible, textarea:focus-visible {
 
     <footer class="composer-wrap">
       <div class="composer">
+        <!-- حقل معاينة الصورة المرفقة -->
+        <div class="image-preview-container" id="imagePreviewContainer">
+          <img src="" id="imagePreview" class="image-preview" alt="معاينة الصورة">
+          <button class="remove-image-btn" id="removeImageBtn" title="إزالة الصورة"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
         <textarea id="messageInput" rows="1" placeholder="اكتب رسالتك لميلو..." aria-label="رسالتك"></textarea>
+        
         <div class="composer-bottom">
-          <div class="composer-note">Enter للإرسال · Shift + Enter لسطر جديد</div>
+          <div class="composer-tools">
+            <!-- زر إرفاق صورة -->
+            <button class="attach-btn" id="attachBtn" title="إرفاق صورة">
+              <i class="fa-solid fa-paperclip"></i>
+            </button>
+            <input type="file" id="imageInput" accept="image/*" style="display: none;">
+            <div class="composer-note">Enter للإرسال · Shift + Enter لسطر جديد</div>
+          </div>
           <button class="send-btn" id="sendBtn" aria-label="إرسال الرسالة">
             <i class="fa-solid fa-arrow-up"></i>
           </button>
@@ -830,6 +919,7 @@ button:focus-visible, textarea:focus-visible {
   let isSending = false;
   let toastTimer;
   let currentConversationId = Date.now();
+  let currentImageBase64 = null; // تخزين الصورة المرفقة بصيغة Base64
   const conversations = [];
   const activeMessages = [];
 
@@ -881,6 +971,13 @@ button:focus-visible, textarea:focus-visible {
     requestAnimationFrame(() => {
       $("chatScroll").scrollTop = $("chatScroll").scrollHeight;
     });
+  }
+
+  function clearImageAttachment() {
+    currentImageBase64 = null;
+    $("imageInput").value = "";
+    $("imagePreview").src = "";
+    $("imagePreviewContainer").classList.remove("show");
   }
 
   function formatText(text) {
@@ -953,7 +1050,32 @@ button:focus-visible, textarea:focus-visible {
     return fragment;
   }
 
-  // إنشاء حاوية الرسالة وتحديث فقاعتها ديناميكياً أثناء التدفق (Streaming)
+  function showThinking() {
+    const article = document.createElement("article");
+    article.className = "message assistant";
+    article.id = "thinkingMessage";
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.innerHTML = '<i class="fa-solid fa-sparkles"></i>';
+
+    const content = document.createElement("div");
+    content.className = "message-content";
+
+    const label = document.createElement("div");
+    label.className = "message-label";
+    label.textContent = "ميلو";
+
+    const typingBox = document.createElement("div");
+    typingBox.className = "typing";
+    typingBox.innerHTML = `<span>جاري التفكير</span><div class="typing-dots"><span></span><span></span><span></span></div>`;
+
+    content.append(label, typingBox);
+    article.append(avatar, content);
+    $("messages").appendChild(article);
+    scrollToBottom();
+  }
+
   function createAssistantMessageContainer() {
     const article = document.createElement("article");
     article.className = "message assistant";
@@ -1014,31 +1136,6 @@ button:focus-visible, textarea:focus-visible {
     };
   }
 
-  function showTyping() {
-    const article = document.createElement("article");
-    article.className = "message assistant";
-    article.id = "typingMessage";
-
-    const avatar = document.createElement("div");
-    avatar.className = "avatar";
-    avatar.innerHTML = '<i class="fa-solid fa-sparkles"></i>';
-
-    const content = document.createElement("div");
-    content.className = "message-content";
-
-    const label = document.createElement("div");
-    label.className = "message-label";
-    label.textContent = "ميلو يكتب...";
-
-    const dots = document.createElement("div");
-    dots.className = "typing";
-    dots.innerHTML = "<span></span><span></span><span></span>";
-
-    content.append(label, dots);
-    article.append(avatar, content);
-    scrollToBottom();
-  }
-
   function renderHistory() {
     const host = $("history");
     host.replaceChildren();
@@ -1080,6 +1177,7 @@ button:focus-visible, textarea:focus-visible {
     saveCurrentConversation();
     activeMessages.length = 0;
     currentConversationId = Date.now();
+    clearImageAttachment();
     $("messages").replaceChildren();
     $("welcome").style.display = "";
     $("messageInput").value = "";
@@ -1096,13 +1194,16 @@ button:focus-visible, textarea:focus-visible {
     activeMessages.length = 0;
     activeMessages.push(...conversation.messages.map(m => ({ ...m })));
     currentConversationId = conversation.id;
+    clearImageAttachment();
     $("messages").replaceChildren();
     $("welcome").style.display = "none";
+    
     activeMessages.forEach(m => {
       if (m.role === "user") {
         const article = document.createElement("article");
         article.className = "message user";
-        article.innerHTML = `<div class="avatar"><i class="fa-solid fa-user"></i></div><div class="message-content"><div class="message-label">أنت</div><div class="bubble">${m.content}</div></div>`;
+        let imageHtml = m.image ? `<img src="${m.image}" class="bubble-image" alt="صورة مرفقة" />` : "";
+        article.innerHTML = `<div class="avatar"><i class="fa-solid fa-user"></i></div><div class="message-content"><div class="message-label">أنت</div><div class="bubble">${imageHtml}${m.content}</div></div>`;
         $("messages").appendChild(article);
       } else {
         const assistantBox = createAssistantMessageContainer();
@@ -1122,31 +1223,34 @@ button:focus-visible, textarea:focus-visible {
     return detail || "تعذر إرسال الرسالة.";
   }
 
-  // إرسال الرسالة وقراءة الاستجابة كـ Stream (سطر بسطر أو Chunk بـ Chunk)
   async function sendMessage(overrideText, retryOnly = false) {
     if (isSending) return;
 
     const input = $("messageInput");
     const text = (overrideText ?? input.value).trim();
-    if (!text) return;
+    const imageToSend = currentImageBase64;
+
+    if (!text && !imageToSend) return;
 
     if (!retryOnly) {
-      activeMessages.push({ role: "user", content: text });
+      activeMessages.push({ role: "user", content: text, image: imageToSend });
       $("welcome").style.display = "none";
       
       const userArticle = document.createElement("article");
       userArticle.className = "message user";
-      userArticle.innerHTML = `<div class="avatar"><i class="fa-solid fa-user"></i></div><div class="message-content"><div class="message-label">أنت</div><div class="bubble">${text}</div></div>`;
+      let imageHtml = imageToSend ? `<img src="${imageToSend}" class="bubble-image" alt="صورة مرفقة" />` : "";
+      userArticle.innerHTML = `<div class="avatar"><i class="fa-solid fa-user"></i></div><div class="message-content"><div class="message-label">أنت</div><div class="bubble">${imageHtml}${text}</div></div>`;
       $("messages").appendChild(userArticle);
       scrollToBottom();
 
       input.value = "";
+      clearImageAttachment();
       resizeInput();
     }
 
     isSending = true;
     $("sendBtn").disabled = true;
-    showTyping();
+    showThinking();
 
     let fullReply = "";
     let assistantUI = null;
@@ -1159,7 +1263,10 @@ button:focus-visible, textarea:focus-visible {
           "Authorization": "Bearer " + MILO_API_KEY,
           "Accept": "application/json"
         },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ 
+          message: text,
+          image: imageToSend // تمرير الصورة إلى API الخادم
+        })
       });
 
       if (!response.ok) {
@@ -1169,11 +1276,9 @@ button:focus-visible, textarea:focus-visible {
         throw new Error(friendlyError(response.status, typeof errJson.detail === "string" ? errJson.detail : ""));
       }
 
-      // إزالة مؤشر "ميلو يكتب..." وإعداد واجهة العرض المتدفقة
-      $("typingMessage")?.remove();
+      $("thinkingMessage")?.remove();
       assistantUI = createAssistantMessageContainer();
 
-      // التحقق مما إذا كانت الاستجابة تدعم التدفّق (Stream) عبر ReadableStream
       if (response.body && typeof response.body.getReader === "function") {
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
@@ -1185,13 +1290,12 @@ button:focus-visible, textarea:focus-visible {
 
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split("\n");
-          buffer = lines.pop(); // الاحتفاظ بالباقي غير الكامل للدفعة التالية
+          buffer = lines.pop();
 
           for (const line of lines) {
             const trimmed = line.trim();
             if (!trimmed) continue;
             
-            // التعامل مع بادئة SSE أو أسطر JSON مباشرة
             let jsonStr = trimmed;
             if (jsonStr.startsWith("data:")) {
               jsonStr = jsonStr.replace("data:", "").trim();
@@ -1200,21 +1304,18 @@ button:focus-visible, textarea:focus-visible {
 
             try {
               const parsed = JSON.parse(jsonStr);
-              // استخراج قيمة الـ token أو الـ response أو الـ reply حسب تصميم الخادم
               const chunk = parsed.token ?? parsed.response ?? parsed.reply ?? parsed.answer ?? parsed.content ?? parsed.chunk ?? "";
               if (typeof chunk === "string" && chunk) {
                 fullReply += chunk;
                 assistantUI.update(fullReply);
               }
             } catch (_) {
-              // إذا لم يكن السطر JSON سليم، قد يكون نصاً عادياً أو تدفق نصوص خام
               fullReply += trimmed + "\n";
               assistantUI.update(fullReply);
             }
           }
         }
 
-        // معالجة ما تبقى في الـ buffer
         if (buffer.trim()) {
           try {
             const parsed = JSON.parse(buffer.trim());
@@ -1230,7 +1331,6 @@ button:focus-visible, textarea:focus-visible {
         }
 
       } else {
-        // Fallback في حال لم يدعم المتصفح أو الخادم التدفق المباشر
         const raw = await response.text();
         let data = {};
         try {
@@ -1252,7 +1352,7 @@ button:focus-visible, textarea:focus-visible {
       setStatus("online", "متصل");
 
     } catch (error) {
-      $("typingMessage")?.remove();
+      $("thinkingMessage")?.remove();
       const message = error?.message || "حدث خطأ غير معروف.";
       
       if (!assistantUI) {
@@ -1274,6 +1374,29 @@ button:focus-visible, textarea:focus-visible {
       input.focus();
     }
   }
+
+  // أحداث إرفاق الصور والتحكم بها
+  $("attachBtn").addEventListener("click", () => $("imageInput").click());
+
+  $("imageInput").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast("يرجى اختيار ملف صورة صالح.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      currentImageBase64 = event.target.result;
+      $("imagePreview").src = currentImageBase64;
+      $("imagePreviewContainer").classList.add("show");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $("removeImageBtn").addEventListener("click", clearImageAttachment);
 
   $("sendBtn").addEventListener("click", () => sendMessage());
 
@@ -1298,8 +1421,9 @@ button:focus-visible, textarea:focus-visible {
   $("clearBtn").addEventListener("click", () => {
     if (!confirm("هل تريد مسح جميع المحادثات الظاهرة؟")) return;
     conversations.length = 0;
-    activeMessages.length, activeMessages.length = 0;
+    activeMessages.length = 0;
     currentConversationId = Date.now();
+    clearImageAttachment();
     $("messages").replaceChildren();
     $("welcome").style.display = "";
     renderHistory();
