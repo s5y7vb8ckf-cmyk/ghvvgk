@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#087f5b">
+<title>ميلو AI | مساعدك الذكي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+:root{
+  --green:#087f5b;
+  --dark:#056044;
+  --light:#eaf7f1;
+  --text:#17251f;
+  --muted:#7b8982;
+  --border:#e5ece8;
+  --bg:#f7f9f8;
+  --sidebar:250px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:"Tajawal",sans-serif;color:var(--text);background:var(--bg)}
+body{overflow:hidden}
+button,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.app{height:100dvh;display:flex;overflow:hidden}
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);background:white;border-left:1px solid var(--border);display:flex;flex-direction:column;padding:22px 15px 14px;z-index:20}
+.brand{display:flex;align-items:center;gap:11px;padding:0 7px 24px}
+.brand-logo,.welcome-logo{display:grid;place-items:center;color:white;background:linear-gradient(145deg,#0d9a6c,#056044);box-shadow:0 5px 14px #087f5b24}
+.brand-logo{width:43px;height:43px;border-radius:15px;font-size:21px}
+.brand-name{font-size:22px;font-weight:800}
+.brand-sub{color:var(--muted);font-size:11px;margin-top:1px}
+.new-chat{border:1px solid #d9ebe2;background:var(--light);color:var(--dark);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:10px;font-weight:700}
+.new-chat:hover{background:#dcf1e7}
+.section-label{margin:26px 9px 11px;color:#89968f;font-size:12px;font-weight:700}
+.history{flex:1;min-height:0;overflow-y:auto}
+.history-empty{color:#98a39d;text-align:center;font-size:13px;line-height:1.9;padding:25px 10px}
+.history-item{display:flex;align-items:center;gap:9px;width:100%;border:0;background:transparent;color:#4f5e56;text-align:right;padding:11px 10px;border-radius:10px;margin-bottom:3px;font-size:13px}
+.history-item:hover{background:#f4f7f5}
+.history-item span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.sidebar-bottom{border-top:1px solid var(--border);padding-top:13px}
+.side-action{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:#526159;padding:11px 10px;border-radius:10px;text-align:right;font-size:13px}
+.side-action:hover{background:var(--bg)}
+.main{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;position:relative}
+.topbar{height:68px;min-height:68px;background:#ffffffed;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 25px;gap:12px}
+.top-title{font-weight:800;font-size:17px}
+.top-subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+.status{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;background:#f0f6f2;border:1px solid #e1ebe4;border-radius:30px;color:#627169;font-size:12px;white-space:nowrap}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#b8a36c}
+.status.online .status-dot{background:#16a36c}
+.status.offline .status-dot{background:#d45d5d}
+.chat-scroll{flex:1;min-height:0;overflow-y:auto;scroll-behavior:smooth}
+.chat-inner{max-width:850px;width:100%;min-height:100%;margin:0 auto;padding:35px 25px 25px;display:flex;flex-direction:column}
+.welcome{margin:auto 0;padding:20px 0 48px;text-align:center}
+.welcome-logo{width:74px;height:74px;margin:0 auto 21px;border-radius:25px;font-size:32px;box-shadow:0 12px 30px #087f5b24}
+.welcome h1{font-size:clamp(25px,4vw,35px);margin:0 0 10px;font-weight:800;letter-spacing:-.5px}
+.welcome h1 span{color:var(--green)}
+.welcome p{color:var(--muted);line-height:1.9;margin:0 auto;max-width:460px;font-size:15px}
+.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;max-width:590px;margin:30px auto 0;text-align:right}
+.suggestion{padding:15px;border:1px solid var(--border);border-radius:15px;background:white;text-align:right;transition:.2s;min-height:83px}
+.suggestion:hover{border-color:#b9dfcc;background:#fbfefc;transform:translateY(-2px)}
+.suggestion i{color:var(--green);margin-left:7px}
+.suggestion strong{font-size:13px;display:block;margin-bottom:5px}
+.suggestion small{color:var(--muted);font-size:12px;line-height:1.6}
+.messages{display:flex;flex-direction:column;gap:25px}
+.message{display:flex;align-items:flex-start;gap:12px;width:100%}
+.message.user{flex-direction:row-reverse}
+.avatar{width:35px;height:35px;min-width:35px;border-radius:12px;display:grid;place-items:center;background:var(--light);color:var(--green);font-size:15px}
+.message.user .avatar{background:#e9eeeb;color:#52645a}
+.message-content{min-width:0;max-width:calc(100% - 48px)}
+.message-label{color:#7e8b84;font-size:12px;font-weight:700;margin:2px 0 7px}
+.bubble{line-height:1.95;font-size:15px;overflow-wrap:anywhere;white-space:pre-wrap}
+.message.user .bubble{display:inline-block;max-width:100%;background:#eaf5ef;padding:11px 15px;border-radius:17px 4px 17px 17px}
+.message.assistant .bubble{padding:0 0 2px}
+.bubble pre{direction:ltr;text-align:left;white-space:pre;overflow-x:auto;background:#15251e;color:#ecf7f0;padding:17px;border-radius:12px;font-family:Consolas,monospace;font-size:13px}
+.bubble code{direction:ltr;unicode-bidi:embed;background:#edf2ef;border-radius:4px;padding:2px 5px;font-family:Consolas,monospace;font-size:.9em}
+.message-actions{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap}
+.mini-btn{border:1px solid transparent;background:transparent;color:#89968e;border-radius:7px;padding:5px 8px;font-size:12px}
+.mini-btn:hover{background:#edf4ef;color:var(--green)}
+.typing{display:flex;align-items:center;gap:5px;padding:8px 0}
+.typing span{width:6px;height:6px;background:#7ba894;border-radius:50%;animation:bounce 1s infinite ease-in-out}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+.composer-wrap{padding:12px 22px 17px;background:linear-gradient(to top,var(--bg) 78%,transparent)}
+.composer{max-width:800px;margin:0 auto;background:white;border:1px solid #dce7e0;border-radius:19px;padding:12px 13px 9px;box-shadow:0 6px 25px #15251e08;transition:border .2s,box-shadow .2s}
+.composer:focus-within{border-color:#9dcdb4;box-shadow:0 0 0 3px #087f5b0c}
+.composer textarea{display:block;width:100%;resize:none;border:0;outline:0;background:transparent;color:var(--text);min-height:43px;max-height:170px;padding:5px 5px 9px;font-size:15px;line-height:1.7}
+.composer textarea::placeholder{color:#9aa59f}
+.composer-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.composer-note{color:#9aa49e;font-size:11px;padding-right:5px}
+.send-btn{width:41px;height:41px;border:0;border-radius:13px;background:var(--green);color:white;display:grid;place-items:center;transition:.2s}
+.send-btn:hover{background:var(--dark)}
+.send-btn:disabled{opacity:.45;cursor:not-allowed}
+.disclaimer{text-align:center;color:#98a39d;font-size:11px;margin:11px auto 0;max-width:800px}
+.mobile-menu{display:none}
+.overlay{display:none;position:fixed;inset:0;background:#10251d66;z-index:19}
+.toast{position:fixed;z-index:80;bottom:24px;left:50%;transform:translate(-50%,15px);background:#18372a;color:white;padding:12px 18px;border-radius:12px;font-size:13px;box-shadow:0 8px 25px #0002;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100% - 30px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:760px){
+ .sidebar{position:fixed;top:0;bottom:0;right:0;transform:translateX(105%);transition:transform .25s;box-shadow:-10px 0 30px #00000008}
+ .sidebar.open{transform:translateX(0)}
+ .overlay.show{display:block}
+ .mobile-menu{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--border);background:white;border-radius:11px;color:var(--text)}
+ .topbar{padding:0 13px;height:61px;min-height:61px}
+ .top-title{font-size:15px}.top-subtitle{font-size:11px}
+ .status{padding:7px 9px;font-size:11px}
+ .chat-inner{padding:24px 16px 20px}
+ .welcome{padding:10px 0 28px}
+ .welcome-logo{width:63px;height:63px;font-size:27px;border-radius:21px}
+ .welcome p{font-size:13px}
+ .suggestions{gap:8px;margin-top:24px}
+ .suggestion{padding:12px;min-height:83px}
+ .suggestion strong{font-size:12px}.suggestion small{font-size:11px}
+ .composer-wrap{padding:9px 10px 11px}
+ .composer{border-radius:16px}
+ .composer textarea{font-size:14px}
+ .disclaimer{font-size:10px}
+ .message{gap:8px}
+ .avatar{width:31px;height:31px;min-width:31px;border-radius:10px}
+ .message-content{max-width:calc(100% - 39px)}
+ .bubble{font-size:14px}
+}
+@media(max-width:380px){
+ .status{font-size:10px}
+ .suggestions{grid-template-columns:1fr}
+ .suggestion{min-height:auto}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><i class="fa-solid fa-sparkles"></i></div>
+      <div>
+        <div class="brand-name">ميلو AI</div>
+        <div class="brand-sub">مساعدك الذكي</div>
+      </div>
+    </div>
+
+    <button class="new-chat" id="newChatBtn">
+      <i class="fa-solid fa-plus"></i><span>محادثة جديدة</span>
+    </button>
+
+    <div class="section-label">المحادثات الأخيرة</div>
+    <div class="history" id="history">
+      <div class="history-empty">محادثاتك الحالية<br>ستظهر هنا</div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="side-action" id="clearBtn">
+        <i class="fa-regular fa-trash-can"></i><span>مسح المحادثات</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="overlay" id="overlay"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:11px;min-width:0">
+        <button class="mobile-menu" id="mobileMenu" aria-label="فتح القائمة">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div>
+          <div class="top-title">ميلو AI</div>
+          <div class="top-subtitle">مساعدك للكتابة والبرمجة والأفكار</div>
+        </div>
+      </div>
+      <div class="status" id="connectionStatus">
+        <span class="status-dot"></span>
+        <span id="statusText">جارٍ الاتصال...</span>
+      </div>
+    </header>
+
+    <section class="chat-scroll" id="chatScroll">
+      <div class="chat-inner">
+        <div class="welcome" id="welcome">
+          <div class="welcome-logo"><i class="fa-solid fa-sparkles"></i></div>
+          <h1>مرحبًا بك في <span>ميلو</span></h1>
+          <p>وش ودك نسوي اليوم؟ اسألني عن البرمجة، أو خلّني أساعدك في أفكارك ومشاريعك.</p>
+          <div class="suggestions">
+            <button class="suggestion" data-prompt="اقترح لي فكرة مشروع تقني مميز أقدر أبدأ فيه">
+              <strong><i class="fa-regular fa-lightbulb"></i> أفكار المشاريع</strong>
+              <small>اكتشف فكرة مشروع جديدة ومميزة</small>
+            </button>
+            <button class="suggestion" data-prompt="ساعدني في كتابة كود HTML لموقع عربي احترافي">
+              <strong><i class="fa-solid fa-code"></i> البرمجة والتطوير</strong>
+              <small>أنشئ موقعًا أو أصلح مشكلة برمجية</small>
+            </button>
+            <button class="suggestion" data-prompt="اكتب لي خطة عملية لتعلم البرمجة من الصفر">
+              <strong><i class="fa-solid fa-graduation-cap"></i> التعلّم</strong>
+              <small>خطوات واضحة للتعلّم والتطوير</small>
+            </button>
+            <button class="suggestion" data-prompt="ساعدني في كتابة إعلان تسويقي احترافي وجذاب">
+              <strong><i class="fa-solid fa-pen-nib"></i> الكتابة والإبداع</strong>
+              <small>نصوص وإعلانات وأفكار إبداعية</small>
+            </button>
+          </div>
+        </div>
+        <div class="messages" id="messages"></div>
+      </div>
+    </section>
+
+    <footer class="composer-wrap">
+      <div class="composer">
+        <textarea id="messageInput" rows="1" placeholder="اكتب رسالتك لميلو..." aria-label="رسالتك"></textarea>
+        <div class="composer-bottom">
+          <div class="composer-note">Enter للإرسال · Shift + Enter لسطر جديد</div>
+          <button class="send-btn" id="sendBtn" aria-label="إرسال الرسالة">
+            <i class="fa-solid fa-arrow-up"></i>
+          </button>
+        </div>
+      </div>
+      <div class="disclaimer">قد يخطئ الذكاء الاصطناعي أحيانًا؛ راجع المعلومات المهمة قبل الاعتماد عليها.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ضع مفتاحك الحقيقي بين علامتي الاقتباس.
+  // لا تنشر هذا الملف علنًا بعد وضع المفتاح فيه.
+  const MILO_API_KEY = "212ba47b47dc42b6859e3e100f4ac9abb05b66534e374985b2f6aae217f299b3";
+
+  // رابط خادم ميلو الحالي؛ حدّثه إذا تغيّر رابط Cloudflare.
+  const API_URL = "https://right-civic-receptor-screensaver.trycloudflare.com";
+
+  const $ = id => document.getElementById(id);
+  let isSending = false;
+  let toastTimer;
+  let currentConversationId = Date.now();
+  const conversations = [];
+  const activeMessages = [];
+
+  function toast(message) {
+    const el = $("toast");
+    el.textContent = message;
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 3500);
+  }
+
+  function setStatus(state, text) {
+    $("connectionStatus").classList.remove("online", "offline");
+    $("connectionStatus").classList.add(state);
+    $("statusText").textContent = text;
+  }
+
+  function closeSidebar() {
+    $("sidebar").classList.remove("open");
+    $("overlay").classList.remove("show");
+  }
+
+  async function checkConnection() {
+    try {
+      const response = await fetch(API_URL + "/health", {
+        method: "GET",
+        cache: "no-store"
+      });
+      if (!response.ok) throw new Error("HTTP " + response.status);
+
+      const data = await response.json();
+      if (data.status === "ok" || data.ollama === "connected" || data.ok === true) {
+        setStatus("online", "متصل");
+      } else {
+        setStatus("offline", "الخادم غير جاهز");
+      }
+    } catch (_) {
+      setStatus("offline", "غير متصل");
+    }
+  }
+
+  function resizeInput() {
+    const input = $("messageInput");
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 170) + "px";
+  }
+
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      $("chatScroll").scrollTop = $("chatScroll").scrollHeight;
+    });
+  }
+
+  function formatText(text) {
+    const fragment = document.createDocumentFragment();
+    const lines = String(text ?? "").split("\n");
+    let inCode = false;
+    let codeLines = [];
+
+    lines.forEach((line, index) => {
+      if (line.trim().startsWith("```")) {
+        if (!inCode) {
+          inCode = true;
+          codeLines = [];
+        } else {
+          const pre = document.createElement("pre");
+          const code = document.createElement("code");
+          code.textContent = codeLines.join("\n");
+          pre.appendChild(code);
+          fragment.appendChild(pre);
+          inCode = false;
+        }
+        return;
+      }
+
+      if (inCode) {
+        codeLines.push(line);
+        return;
+      }
+
+      const row = document.createElement("div");
+      const heading = line.match(/^\s{0,3}#{1,3}\s+(.+)$/);
+
+      if (heading) {
+        const strong = document.createElement("strong");
+        strong.textContent = heading[1];
+        row.appendChild(strong);
+      } else {
+        const pattern = /(\*\*[^*]+\*\*|`[^`]+`)/g;
+        let last = 0;
+        let match;
+
+        while ((match = pattern.exec(line)) !== null) {
+          row.appendChild(document.createTextNode(line.slice(last, match.index)));
+          if (match[0].startsWith("**")) {
+            const strong = document.createElement("strong");
+            strong.textContent = match[0].slice(2, -2);
+            row.appendChild(strong);
+          } else {
+            const code = document.createElement("code");
+            code.textContent = match[0].slice(1, -1);
+            row.appendChild(code);
+          }
+          last = match.index + match[0].length;
+        }
+        row.appendChild(document.createTextNode(line.slice(last)));
+      }
+
+      fragment.appendChild(row);
+      if (index < lines.length - 1) fragment.appendChild(document.createElement("br"));
+    });
+
+    if (inCode) {
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.textContent = codeLines.join("\n");
+      pre.appendChild(code);
+      fragment.appendChild(pre);
+    }
+
+    return fragment;
+  }
+
+  function renderMessage(role, content, actions = true) {
+    const article = document.createElement("article");
+    article.className = "message " + (role === "user" ? "user" : "assistant");
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    const icon = document.createElement("i");
+    icon.className = role === "user" ? "fa-solid fa-user" : "fa-solid fa-sparkles";
+    avatar.appendChild(icon);
+
+    const contentBox = document.createElement("div");
+    contentBox.className = "message-content";
+
+    const label = document.createElement("div");
+    label.className = "message-label";
+    label.textContent = role === "user" ? "أنت" : "ميلو";
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.appendChild(formatText(content));
+    contentBox.append(label, bubble);
+
+    if (role !== "user" && actions) {
+      const bar = document.createElement("div");
+      bar.className = "message-actions";
+
+      const copy = document.createElement("button");
+      copy.className = "mini-btn";
+      copy.innerHTML = '<i class="fa-regular fa-copy"></i> نسخ';
+      copy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(content);
+          toast("تم نسخ الرد.");
+        } catch (_) {
+          toast("تعذر النسخ؛ حدد النص وانسخه يدويًا.");
+        }
+      });
+
+      const retry = document.createElement("button");
+      retry.className = "mini-btn";
+      retry.innerHTML = '<i class="fa-solid fa-rotate-right"></i> إعادة المحاولة';
+      retry.addEventListener("click", () => {
+        const lastUser = [...activeMessages].reverse().find(m => m.role === "user");
+        if (lastUser) sendMessage(lastUser.content, true);
+      });
+
+      bar.append(copy, retry);
+      contentBox.appendChild(bar);
+    }
+
+    article.append(avatar, contentBox);
+    $("messages").appendChild(article);
+    scrollToBottom();
+    return article;
+  }
+
+  function showTyping() {
+    const article = document.createElement("article");
+    article.className = "message assistant";
+    article.id = "typingMessage";
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.innerHTML = '<i class="fa-solid fa-sparkles"></i>';
+
+    const content = document.createElement("div");
+    content.className = "message-content";
+
+    const label = document.createElement("div");
+    label.className = "message-label";
+    label.textContent = "ميلو يكتب...";
+
+    const dots = document.createElement("div");
+    dots.className = "typing";
+    dots.innerHTML = "<span></span><span></span><span></span>";
+
+    content.append(label, dots);
+    article.append(avatar, content);
+    $("messages").appendChild(article);
+    scrollToBottom();
+  }
+
+  function renderHistory() {
+    const host = $("history");
+    host.replaceChildren();
+
+    if (!conversations.length) {
+      const empty = document.createElement("div");
+      empty.className = "history-empty";
+      empty.textContent = "محادثاتك السابقة تظهر هنا أثناء استخدام الصفحة.";
+      host.appendChild(empty);
+      return;
+    }
+
+    conversations.forEach((conversation, index) => {
+      const btn = document.createElement("button");
+      btn.className = "history-item";
+
+      const icon = document.createElement("i");
+      icon.className = "fa-regular fa-message";
+
+      const title = document.createElement("span");
+      title.textContent = conversation.title;
+
+      btn.append(icon, title);
+      btn.addEventListener("click", () => loadConversation(index));
+      host.appendChild(btn);
+    });
+  }
+
+  function saveCurrentConversation() {
+    if (!activeMessages.length) return;
+    conversations.unshift({
+      id: currentConversationId,
+      title: activeMessages.find(m => m.role === "user")?.content?.slice(0, 42) || "محادثة جديدة",
+      messages: activeMessages.map(m => ({ ...m }))
+    });
+  }
+
+  function startConversation() {
+    saveCurrentConversation();
+    activeMessages.length = 0;
+    currentConversationId = Date.now();
+    $("messages").replaceChildren();
+    $("welcome").style.display = "";
+    $("messageInput").value = "";
+    resizeInput();
+    renderHistory();
+    closeSidebar();
+  }
+
+  function loadConversation(index) {
+    const conversation = conversations[index];
+    if (!conversation) return;
+
+    saveCurrentConversation();
+    activeMessages.length = 0;
+    activeMessages.push(...conversation.messages.map(m => ({ ...m })));
+    currentConversationId = conversation.id;
+    $("messages").replaceChildren();
+    $("welcome").style.display = "none";
+    activeMessages.forEach(m => renderMessage(m.role, m.content, m.role !== "user"));
+    closeSidebar();
+  }
+
+  function extractReply(data) {
+    if (typeof data === "string") return data;
+    if (!data || typeof data !== "object") return "";
+
+    const direct = data.reply ?? data.response ?? data.answer ?? data.message ?? data.content;
+    if (typeof direct === "string" && direct.trim()) return direct;
+
+    if (Array.isArray(data.choices)) {
+      const choice = data.choices[0];
+      const answer = choice?.message?.content ?? choice?.text;
+      if (typeof answer === "string" && answer.trim()) return answer;
+    }
+
+    if (typeof data.result === "string") return data.result;
+    if (data.data && typeof data.data === "object") return extractReply(data.data);
+    return "";
+  }
+
+  function friendlyError(status, detail) {
+    if (status === 401) return "مفتاح الاتصال غير صحيح. تأكد أن المفتاح في الكود مطابق لمفتاح الخادم في MILO_API_KEY، ثم أعد تشغيل الخادم.";
+    if (status === 403) return "الخادم رفض الطلب.";
+    if (status === 404) return "مسار /api/chat غير موجود في الخادم. تحقق من main.py.";
+    if (status === 429) return "الطلبات كثيرة الآن؛ انتظر قليلًا ثم أعد المحاولة.";
+    if (status === 503) return "الخادم غير جاهز أو لم يتم إعداد مفتاحه.";
+    if (status >= 500) return "حدث خطأ داخل الخادم. راجع نافذة PowerShell.";
+    return detail || "تعذر إرسال الرسالة.";
+  }
+
+  async function sendMessage(overrideText, retryOnly = false) {
+    if (isSending) return;
+
+    const input = $("messageInput");
+    const text = (overrideText ?? input.value).trim();
+    if (!text) return;
+
+    if (!retryOnly) {
+      activeMessages.push({ role: "user", content: text });
+      $("welcome").style.display = "none";
+      renderMessage("user", text);
+      input.value = "";
+      resizeInput();
+    }
+
+    if (!MILO_API_KEY || MILO_API_KEY === "PASTE_YOUR_KEY_HERE") {
+      toast("ضع مفتاح MILO_API_KEY داخل الكود أولًا.");
+      return;
+    }
+
+    isSending = true;
+    $("sendBtn").disabled = true;
+    showTyping();
+
+    try {
+      const response = await fetch(API_URL + "/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + MILO_API_KEY,
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ message: text })
+      });
+
+      const raw = await response.text();
+      let data = {};
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch (_) {
+        throw new Error("استجابة الخادم ليست JSON. تحقق من رابط الخادم والمسار.");
+      }
+
+      if (!response.ok) {
+        throw new Error(friendlyError(response.status, typeof data.detail === "string" ? data.detail : ""));
+      }
+
+      const reply = extractReply(data);
+      if (!reply) throw new Error("وصل رد من الخادم لكن لم أجد نص الإجابة. تحقق من main.py.");
+
+      activeMessages.push({ role: "assistant", content: reply });
+      $("typingMessage")?.remove();
+      renderMessage("assistant", reply);
+      setStatus("online", "متصل");
+    } catch (error) {
+      $("typingMessage")?.remove();
+      const message = error?.message || "حدث خطأ غير معروف.";
+      renderMessage("assistant", "تعذر إكمال الطلب.\n\n" + message);
+
+      if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+        setStatus("offline", "غير متصل");
+        toast("تعذر الوصول إلى الخادم. تأكد من تشغيله ومن صحة رابط Cloudflare.");
+      } else {
+        toast(message.slice(0, 180));
+      }
+    } finally {
+      isSending = false;
+      $("sendBtn").disabled = false;
+      input.focus();
+    }
+  }
+
+  $("sendBtn").addEventListener("click", () => sendMessage());
+
+  $("messageInput").addEventListener("input", resizeInput);
+  $("messageInput").addEventListener("keydown", event => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  document.querySelectorAll(".suggestion").forEach(button => {
+    button.addEventListener("click", () => {
+      $("messageInput").value = button.dataset.prompt || "";
+      resizeInput();
+      sendMessage();
+    });
+  });
+
+  $("newChatBtn").addEventListener("click", startConversation);
+
+  $("clearBtn").addEventListener("click", () => {
+    if (!confirm("هل تريد مسح المحادثات الظاهرة في هذه الصفحة؟")) return;
+    conversations.length = 0;
+    activeMessages.length = 0;
+    currentConversationId = Date.now();
+    $("messages").replaceChildren();
+    $("welcome").style.display = "";
+    renderHistory();
+    closeSidebar();
+    toast("تم مسح المحادثات.");
+  });
+
+  $("mobileMenu").addEventListener("click", () => {
+    $("sidebar").classList.add("open");
+    $("overlay").classList.add("show");
+  });
+
+  $("overlay").addEventListener("click", closeSidebar);
+
+  renderHistory();
+  checkConnection();
+})();
+</script>
+</body>
+</html>
